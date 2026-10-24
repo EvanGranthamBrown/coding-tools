@@ -52,3 +52,15 @@ Spin up an "architect" sub-agent with no context. Give it the prompt in `referen
 - "@output-path": `tmp/YYYYMMDD-hhmmss-architecture.md`
 
 You may customize this prompt further if you think it's important.
+
+Once the architect finishes its draft, review its work in light of your knowledge of the existing code base. Note any bugs or issues that you find. Also think about what would have to be changed to comply with the new design, and consider:
+
+1. Has the user specifically given orders (to coding agents or in human-written documentation) not to go this route? If so, obey that directive unless the benefit is enormous or the user's stated reasons no longer apply. In those cases, ask the user for permission.
+2. Does this change improve the current design, worsen it, or have no real impact either way? Avoid changes that don't lead to a clear improvement.
+3. Has this change been tried before in this codebase? If so, why was it rejected last time? Don't move forward unless you're confident those problems won't recur.
+4. How much risk is associated with this change? Will it require manual or time-consuming testing (beyond running a normal automated test suite), or a challenging deployment process? Keep in mind that the user has already accepted significant effort and risk by asking for a rearchitecting, so this should only be a deal-breaker if the effort/risk are very high and the benefit small.
+5. Will this change dramatically increase the monetary cost (one-time or ongoing) of the system? If so, see if there's a way to avoid it. If not, and the user has not given you a specific budget, provide the user with an estimate of the cost increase and ask whether to proceed.
+
+Based on this, suggest adjustments to the sub-agent, and answer any questions or concerns it has. If it says it can't implement a suggestion properly, note the fact and move on. Continue until you think the draft is in good shape (aside from any declined suggestions), keeping in mind that this is a high-level architectural document and doesn't have to cover every detail.
+
+(If the sub-agent declined some of your suggestions, think about the reasons it gave for refusal. If you think it's wrong and you can safely implement those suggestions yourself, do so. Otherwise, leave it.)

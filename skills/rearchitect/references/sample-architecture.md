@@ -1,5 +1,6 @@
 # OVERVIEW
 **Name:** Scraper Pipeline
+
 **Summary:** Two scheduled batch jobs on a single EC2 instance. Each step selects the PostgreSQL rows that need work, does the work, and records the result, so any step can be re-run safely. Scraping keeps snapshots of relevant pages. Extraction turns snapshots into *mentions* of entities, then resolves mentions into the canonical venues, activities, and occurrences that the website reads.
 
 # TECHNOLOGIES

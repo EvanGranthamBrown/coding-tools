@@ -1,19 +1,24 @@
 ---
 name: rearchitect
-description: Overhaul a group of code files to make the code simpler, cleaner, and better designed. Activate after implementing substantial new features, or on user request.
+description: Overhaul a group of code files to make the code simpler, cleaner, and better designed. Activated on user request.
 metadata:
   version: 0.1.0
   author: Evan Grantham-Brown
 ---
 This skill ensures that the code base is kept clean, clear, and well-organized.
 
-Area of focus: $ARGUMENT
+Area of focus: $ARGUMENTS
 
 (If no area of focus is given, your focus is the entire code base.)
 
 ## 1. Safety Check
-Run `git status --porcelain` and verify that it returns nothing.
-If it returns non-empty, you'll need to add or gitignore any untracked files, then commit all changes, so you have a stable base to roll back to. If the user activated this skill and `git status --porcelain` shows changes you didn't make, get confirmation from the user before proceeding.
+We want to start from a safe, committed base so the project can roll back if necessary. If `git status --porcelain` returns empty, everything is fine and you can proceed. If it shows untracked files and/or uncommitted changes:
+- For each untracked file, decide whether you think it should be added or gitignored. Follow any clear project conventions that apply; otherwise, fall back to general best practices.
+- If uncommitted changes would insert sensitive data (passwords, API keys, etc.) into a tracked file, or if project conventions dictate adding an untracked file that has sensitive data, tell the user which files are affected, then abort. Never commit sensitive data to git.
+    - You do not need to abort for sensitive data that has already been committed. However, if you see any, warn the user.
+- If no sensitive data will be added, tell the user which files your planned commit will add, delete, gitignore, or modify, then ask for permission to proceed.
+- If the user grants permission, generate the commit with an appropriate message and proceed.
+- If the user denies permission, abort.
 
 ## 2. Draft Feature Doc
 Go through the code and write a "feature doc." This brief document describes the essential functions of the system, but NOT implementation details. A zero-context agent will use the feature doc to design an "ideal architecture" for the system, and we do not want it influenced by the present implementation. See `references/sample-feature-doc.md` for an example.

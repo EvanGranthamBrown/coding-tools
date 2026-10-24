@@ -48,8 +48,8 @@ Go through the code and write a "feature doc." This brief document describes the
 Spin up an "architect" sub-agent with no context. Give it the prompt in `references/architect-prompt.md`, with the following string substitutions:
 
 - "@feature-doc-path": Path to the feature doc
-- "@sample-output": Absolute path to `references/sample-architecture.md`
-- "@output-path": `tmp/YYYYMMDD-hhmmss-architecture.md`
+- "@sample-architecture-plan": Absolute path to `references/sample-architecture.md`
+- "@architecture-plan-path": `tmp/YYYYMMDD-hhmmss-architecture.md`
 
 You may customize this prompt further if you think it's important.
 
@@ -64,3 +64,22 @@ Once the architect finishes its draft, review its work in light of your knowledg
 Based on this, suggest adjustments to the sub-agent, and answer any questions or concerns it has. If it says it can't implement a suggestion properly, note the fact and move on. Continue until you think the draft is in good shape (aside from any declined suggestions), keeping in mind that this is a high-level architectural document and doesn't have to cover every detail.
 
 (If the sub-agent declined some of your suggestions, think about the reasons it gave for refusal. If you think it's wrong and you can safely implement those suggestions yourself, do so. Otherwise, leave it.)
+
+## 4. Edit Architecture
+Spin up an "editor" sub-agent and give it the prompt in `references/editor-prompt.md`, with the following string substitutions:
+
+- "@feature-doc-path": Path to the feature doc
+- "@architecture-plan-path": `tmp/YYYYMMDD-hhmmss-architecture.md`
+
+You may customize this prompt further if you think it's important.
+
+The editor agent will generate a list of improvements and suggestions. Consider each in light of what you've learned so far, and make those changes you agree with.
+
+## 5. Draft Implementation Plans
+The next step is to write detailed plans to carry out the overhaul. Identify the breakpoints where you can split the architecture into components that talk to each other through tightly defined interfaces. Add the list of components to the architecture plan, and specify what methods or classes each one exposes to the others.
+
+Then, for each component, spin up a sub-agent and give it the prompt in `references/implementation-planner-prompt.md`. Make the following string substitutions:
+
+- "@feature-doc-path": Path to the feature doc
+- "@architecture-plan-path": `tmp/YYYYMMDD-hhmmss-architecture.md`
+- "@implementor-assignment": The component assigned to this sub-agent

@@ -81,4 +81,11 @@ When the writer reports that the first draft is done, launch a "reviewer" sub-ag
 
 When the writer reports that it has finished its edits, launch a "copy-editor" sub-agent and give it the prompt in `references/summary-copy-editor-prompt.md`, replacing "@plan-directory" with the path to the plan directory. Notify the writer when the copy editor finishes.
 
-Wait for the writer to report that the final draft is complete.
+When the writer reports that the final draft is complete, proceed to the final section.
+
+## 6. Present Summary and Discuss
+Tell the user that the first version of the plan is ready.
+
+The final draft of the user summary will be the `summary.md` file in the plan directory. If you have a tool to open the file in the user's UI, do so, ideally in markdown preview mode. If you don't have such a tool, give the user the path to the file, preferably as a clickable link (if you can).
+
+The user will review the summary and may respond with questions, suggestions, or concerns. Discuss and revise until the user is satisfied. When you make revisions, update the architecture plan and the user summary at the same time; also update the feature doc if the changes warrant it.

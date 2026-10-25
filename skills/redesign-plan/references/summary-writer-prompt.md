@@ -16,6 +16,7 @@ In your scratch file, make a list of the things your explanation needs to cover.
 - What new functionality is being written from scratch
 - The most impactful and/or risky changes being made to the current implementation
 - How the new code will be tested to ensure it works
+- Risky or expensive elements of the migration plan
 - Anything noted in "User Review Items"
 - Anything else the user should be aware of
 

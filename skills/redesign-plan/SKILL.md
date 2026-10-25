@@ -10,6 +10,7 @@ This skill generates a plan for a large-scale redesign of an existing system. Gu
 
 - This plan will be implemented by AI coding agents, which means it can contemplate sweeping changes without committing months or years of human dev time. Be bold.
 - Creating the plan will take some time, and the user may have other things to do. Only engage the user at the start (in "Prepare Base") and at the end (in "Present Summary and Discuss"). Don't stop in the middle to wait on a user reply.
+- Many of your sub-agents will need the ability to resume after returning their initial result (a common pattern is having an agent generate a first draft, providing feedback, and having it apply that feedback). If your harness doesn't support this, you'll need to launch secondary agents to apply feedback.
 
 Redesign target: $ARGUMENTS
 
@@ -18,8 +19,8 @@ Redesign target: $ARGUMENTS
 ## 1. Prepare Base
 We want to ensure that the plan is written against a known, committed base. If `git status --porcelain` returns empty, everything is fine and you can proceed. If it shows untracked files and/or uncommitted changes:
 - For each untracked file, decide whether you think it should be added or gitignored. Follow any clear project conventions that apply; otherwise, fall back to general best practices.
-- If uncommitted changes would insert sensitive data (passwords, API keys, etc.) into a tracked file, or if project conventions dictate adding an untracked file that has sensitive data, tell the user which files are affected, then abort. Never commit sensitive data to git.
-    - You do not need to abort for sensitive data that has already been committed. However, if you see any, warn the user.
+- If uncommitted changes would insert sensitive data (passwords, API keys, etc.) into a tracked file, or if project conventions dictate adding an untracked file that has sensitive data, tell the user which files are affected and ask whether to proceed without a commit. If the user says to proceed, move on to #2. Never commit sensitive data to git.
+    - Your commit does not have to *remove* sensitive data that is already committed.
 - If no sensitive data will be added, tell the user which files your planned commit will add, delete, gitignore, or modify, then ask for permission to commit.
 - If the user grants permission, generate the commit with an appropriate message.
 - If the user denies permission, your architecture plan should note that it is based on uncommitted changes.
@@ -52,6 +53,7 @@ Go through the code and write a "feature doc." This brief document describes the
         - Include cost, complexity, and performance considerations, not just correctness issues.
         - If you find code changes addressing a hypothetical scenario, with no indication that the scenario actually happened, assess whether that scenario is likely and/or impactful enough to justify altering the design. If in doubt, leave it out.
         - Summarize the problem only. Do NOT describe how it was solved. Avoid language which hints at a particular solution.
+- **Access Points**: Declares the points where users and external systems connect to the code under review.
 - **User Review Items**: Decisions you made which you want the user to review.
 
 ## 4. Draft Greenfield Architecture
@@ -78,7 +80,7 @@ Spin up a "first plan reviewer" sub-agent and give it the prompt in `references/
 This agent will generate a list of improvements and suggestions. Consider each in light of what you've learned so far, and make those changes you agree with.
 
 ## 6. Draft Migration Plan
-For each component listed in the architecture plan, spin up a "migration planner" sub-agent and give it the prompt in `references/migration-planner-prompt.md`, with the following string substitutions:
+For each component listed in the architecture plan, spin up a "migration planner" sub-agent (don't run more than 10 in parallel) and give it the prompt in `references/migration-planner-prompt.md`, with the following string substitutions:
 
 - "@plan-directory": Path to the plan directory
 - "@assignment": Name of the agent's assigned component
@@ -86,7 +88,7 @@ For each component listed in the architecture plan, spin up a "migration planner
 
 These sub-agents will prepare plans to migrate each component, along with concerns and suggestions to update the architecture plan; these are stored in the draft subdirectory, named `migrate-<component>.md`. When all have finished, review their work. First look over their suggestions for the architecture and make those changes you agree with. Then look for problems within each migration plan, conflicts between the plans, and changes forced by your architecture revisions. Direct the migration planners to fix these issues.
 
-When they're done with the revision pass, draft a single `migration.md` file in the main plan directory, where you lay out a complete migration plan. Consider how to sequence the migration safely and how to minimize the number of manual steps required.
+When they're done with the revision pass, draft a single `migration.md` file in the main plan directory, where you lay out a complete migration plan. Consider how to sequence the migration safely and how to minimize the number of manual steps required. Also, if there are existing code files which are not covered by any component of the new architecture, document how to handle them.
 
 ## 7. Second Automated Review
 Spin up a "second plan reviewer" sub-agent and give it the prompt in `references/second-plan-reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.

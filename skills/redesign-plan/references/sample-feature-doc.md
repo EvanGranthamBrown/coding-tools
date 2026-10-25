@@ -52,5 +52,8 @@ Complications:
 - e4c28a6: The same entity is referenced on multiple websites.
 - 5d8e0b2: Development can require schema changes to the live database.
 
+# ACCESS POINTS
+- The website reads `venue`, `activity`, and `occurrence` tables in a PostgreSQL RDS database, which the pipeline populates.
+
 # USER REVIEW ITEMS
 - The roadmap says studio owners will be able to create accounts on the website and edit their own listings, but it doesn't say how this will be integrated with automatic scraping. I assumed this would be handled at a later stage and kept it out of scope for the pipeline.

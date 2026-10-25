@@ -12,5 +12,6 @@ You are helping to plan the migration for the rearchitecting laid out in `@plan-
         - It can be reused as-is with minimal changes. This is ideal.
         - It needs to be rewritten, but does test important functionality.
         - It tests something that will not exist or does not apply in the new design and can be deleted.
+    - If the changes will require a data migration, plan how to do that and note whether it will be possible to roll those changes back if necessary.
 3. Notify the caller that your plan is ready.
 4. The caller will integrate your work with that of other migration planners, then direct you to make changes. Apply those changes as directed. Notify the caller when you're done.

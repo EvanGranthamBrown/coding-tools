@@ -13,14 +13,15 @@ This skill generates a plan for a large-scale redesign of an existing system. Gu
 Redesign target: $ARGUMENTS
 
 (If no target is given, your target is the entire code base in the current repo.)
-## 1. Safety Check
-We want to start from a safe, committed base so the project can roll back if necessary. If `git status --porcelain` returns empty, everything is fine and you can proceed. If it shows untracked files and/or uncommitted changes:
+
+## 1. Prepare Base
+We want to ensure that the plan is written against a known, committed base. If `git status --porcelain` returns empty, everything is fine and you can proceed. If it shows untracked files and/or uncommitted changes:
 - For each untracked file, decide whether you think it should be added or gitignored. Follow any clear project conventions that apply; otherwise, fall back to general best practices.
 - If uncommitted changes would insert sensitive data (passwords, API keys, etc.) into a tracked file, or if project conventions dictate adding an untracked file that has sensitive data, tell the user which files are affected, then abort. Never commit sensitive data to git.
     - You do not need to abort for sensitive data that has already been committed. However, if you see any, warn the user.
-- If no sensitive data will be added, tell the user which files your planned commit will add, delete, gitignore, or modify, then ask for permission to proceed.
-- If the user grants permission, generate the commit with an appropriate message and proceed.
-- If the user denies permission, abort.
+- If no sensitive data will be added, tell the user which files your planned commit will add, delete, gitignore, or modify, then ask for permission to commit.
+- If the user grants permission, generate the commit with an appropriate message.
+- If the user denies permission, your architecture plan should note that it is based on uncommitted changes.
 
 ## 2. Create Plan Directory
 Create the directory `doc/plan/YYYYMMDD-hhmmss-redesign/` under the project root. All planning files will go here.
@@ -63,23 +64,23 @@ Once the architect finishes its draft, review `architecture.md` in the plan dire
 2. Does this change improve the current design, worsen it, or have no real impact either way? Avoid changes that don't lead to a clear improvement.
 3. Has this change been tried before in this codebase? If so, why was it rejected last time? Don't move forward unless you're confident those problems won't recur.
 4. How much risk is associated with this change? Will it require manual or time-consuming testing (beyond running a normal automated test suite), or a challenging deployment process? Keep in mind that the user has already accepted significant effort and risk by asking for a rearchitecting, so this should only be a deal-breaker if the effort/risk are very high and the benefit small.
-5. Will this change dramatically increase the monetary cost (one-time or ongoing) of the system? If so, see if there's a way to avoid it. If not, and the user has not given you a specific budget, provide the user with an estimate of the cost increase and ask whether to proceed.
+5. Will this change dramatically increase the monetary cost (one-time or ongoing) of the system? If so, see if there's a way to avoid it. If not, and the user has not given you a specific budget, estimate the cost increase and note that in User Review Items.
 
 Based on this, suggest adjustments to the sub-agent, and answer any questions or concerns it has. If it says it can't implement a suggestion properly, note the fact and move on. Continue until you think the draft is in good shape (aside from any declined suggestions), keeping in mind that this is a high-level architectural document and doesn't have to cover every detail.
 
 (If the sub-agent declined some of your suggestions, think about the reasons it gave for refusal. If you think it's wrong and you can safely implement those suggestions yourself, do so. Otherwise, leave it.)
 
 ## 5. Automated Review
-Spin up a "reviewer" sub-agent and give it the prompt in `references/reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
+Spin up a "plan reviewer" sub-agent and give it the prompt in `references/reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
 
 The reviewer agent will generate a list of improvements and suggestions. Consider each in light of what you've learned so far, and make those changes you agree with.
 
 ## 6. Prepare User Summary
-Spin up a "writer" sub-agent and give it the prompt in `references/summary-writer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
+Spin up a "summary writer" sub-agent and give it the prompt in `references/summary-writer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
 
-When the writer reports that the first draft is done, launch a "reviewer" sub-agent and give it the prompt in `references/summary-reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory. Notify the writer when the reviewer finishes.
+When the writer reports that the first draft is done, launch a "summary reviewer" sub-agent and give it the prompt in `references/summary-reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory. Notify the writer when the summary reviewer finishes.
 
-When the writer reports that it has finished its edits, launch a "copy-editor" sub-agent and give it the prompt in `references/summary-copy-editor-prompt.md`, replacing "@plan-directory" with the path to the plan directory. Notify the writer when the copy editor finishes.
+When the writer reports that it has finished its edits, launch a "summary copy-editor" sub-agent and give it the prompt in `references/summary-copy-editor-prompt.md`, replacing "@plan-directory" with the path to the plan directory. Notify the writer when the copy editor finishes.
 
 When the writer reports that the final draft is complete, proceed to the final section.
 

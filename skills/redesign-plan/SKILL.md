@@ -1,18 +1,18 @@
 ---
-name: redesign-draft
-description: Draft a plan make the code simpler, cleaner, and better designed. Activated on user request.
+name: redesign-plan
+description: Draft a plan to overhaul an existing code base for a clean, well-organized architecture. Activated on user request.
 metadata:
   version: 0.1.0
   author: Evan Grantham-Brown
 ---
-This skill helps make sure the code base is clean, clear, and well-organized.
+This skill generates a plan for a large-scale redesign of an existing system. Guidelines to keep in mind:
+
+- This plan will be implemented by AI coding agents, which means it can contemplate sweeping changes without committing months or years of human dev time. Be bold.
+- Creating the plan will take some time, and the user may have other things to do. Only engage the user at the start (in "Safety Check") and at the end (in "Present Summary and Discuss"). Don't stop in the middle to wait on a user reply.
 
 Redesign target: $ARGUMENTS
 
-(If no target is given, your target is the entire code base.)
-
-When you start this process, cgenerate a timestamp in the form `YYYYMMDD-hhmmss`. You'll use this throughout to identify the project.
-
+(If no target is given, your target is the entire code base in the current repo.)
 ## 1. Safety Check
 We want to start from a safe, committed base so the project can roll back if necessary. If `git status --porcelain` returns empty, everything is fine and you can proceed. If it shows untracked files and/or uncommitted changes:
 - For each untracked file, decide whether you think it should be added or gitignored. Follow any clear project conventions that apply; otherwise, fall back to general best practices.
@@ -25,7 +25,7 @@ We want to start from a safe, committed base so the project can roll back if nec
 ## 2. Create Plan Directory
 Create the directory `doc/plan/YYYYMMDD-hhmmss-redesign/` under the project root. All planning files will go here.
 
-## 2. Draft Feature Doc
+## 3. Draft Feature Doc
 Go through the code and write a "feature doc." This brief document describes the essential functions of the system, but NOT implementation details. A zero-context agent will use the feature doc to design an "ideal architecture" for the system, and we do not want it influenced by the present implementation. See `references/sample-feature-doc.md` for an example.
 
 - Store the document in `feature-doc.md` in the plan direcotry.
@@ -51,7 +51,7 @@ Go through the code and write a "feature doc." This brief document describes the
         - Summarize the problem only. Do NOT describe how it was solved. Avoid language which hints at a particular solution.
 - **User Review Items**: Decisions you made which you want the user to review.
 
-## 3. Draft Greenfield Architecture
+## 4. Draft Greenfield Architecture
 Spin up an "architect" sub-agent with no context. Give it the prompt in `references/architect-prompt.md`, with the following string substitutions:
 
 - "@plan-directory": Path to the plan directory
@@ -69,12 +69,12 @@ Based on this, suggest adjustments to the sub-agent, and answer any questions or
 
 (If the sub-agent declined some of your suggestions, think about the reasons it gave for refusal. If you think it's wrong and you can safely implement those suggestions yourself, do so. Otherwise, leave it.)
 
-## 4. Automated Review
+## 5. Automated Review
 Spin up a "reviewer" sub-agent and give it the prompt in `references/reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
 
 The reviewer agent will generate a list of improvements and suggestions. Consider each in light of what you've learned so far, and make those changes you agree with.
 
-## 5. Prepare User Summary
+## 6. Prepare User Summary
 Spin up a "writer" sub-agent and give it the prompt in `references/summary-writer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
 
 When the writer reports that the first draft is done, launch a "reviewer" sub-agent and give it the prompt in `references/summary-reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory. Notify the writer when the reviewer finishes.
@@ -83,7 +83,7 @@ When the writer reports that it has finished its edits, launch a "copy-editor" s
 
 When the writer reports that the final draft is complete, proceed to the final section.
 
-## 6. Present Summary and Discuss
+## 7. Present Summary and Discuss
 Tell the user that the first version of the plan is ready.
 
 The final draft of the user summary will be the `summary.md` file in the plan directory. If you have a tool to open the file in the user's UI, do so, ideally in markdown preview mode. If you don't have such a tool, give the user the path to the file, preferably as a clickable link (if you can).

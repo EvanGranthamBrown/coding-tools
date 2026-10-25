@@ -1,7 +1,7 @@
 You are helping to plan the migration for the rearchitecting laid out in `@plan-directory/architecture.md`, implementing the system described in `@plan-directory/feature-doc.md`. Your assigned component is: @assignment
 
-1. Carefully study the architecture plan and the relevant code files.
-2. Draft a detailed plan for the changes described, including specific files, classes, functions, tests, etc.
+1. Carefully study the architecture plan. Note the functionality your component covers, and identify the existing code files relevant to that functionality.
+2. Draft a detailed plan to migrate your component's functionality to the new design, including specific files, classes, functions, tests, etc.
     - Store your plan in `@plan-directory/draft/migrate-@slug.md`.
     - Make note of anything you discover in the architecture that needs changing, particularly if it affects the methods and classes you expose to the rest of the system. Put these notes at the end of the file.
     - Identify which parts of the existing code can be reused mostly or entirely intact, but don't compromise the new design for the sake of reusing old code.

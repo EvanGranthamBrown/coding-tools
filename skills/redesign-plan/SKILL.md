@@ -80,7 +80,7 @@ Spin up a "first plan reviewer" sub-agent and give it the prompt in `references/
 This agent will generate a list of improvements and suggestions. Consider each in light of what you've learned so far, and make those changes you agree with.
 
 ## 6. Draft Migration Plan
-For each component listed in the architecture plan, spin up a "migration planner" sub-agent (don't run more than 10 in parallel) and give it the prompt in `references/migration-planner-prompt.md`, with the following string substitutions:
+For each component listed in the architecture plan, spin up a "migration planner" sub-agent (don't run more than 20 in parallel) and give it the prompt in `references/migration-planner-prompt.md`, with the following string substitutions:
 
 - "@plan-directory": Path to the plan directory
 - "@assignment": Name of the agent's assigned component

@@ -1,15 +1,17 @@
 ---
-name: rearchitect
-description: Overhaul a group of code files to make the code simpler, cleaner, and better designed. Activated on user request.
+name: redesign-draft
+description: Draft a plan make the code simpler, cleaner, and better designed. Activated on user request.
 metadata:
   version: 0.1.0
   author: Evan Grantham-Brown
 ---
-This skill ensures that the code base is kept clean, clear, and well-organized.
+This skill helps make sure the code base is clean, clear, and well-organized.
 
-Area of focus: $ARGUMENTS
+Redesign target: $ARGUMENTS
 
-(If no area of focus is given, your focus is the entire code base.)
+(If no target is given, your target is the entire code base.)
+
+When you start this process, cgenerate a timestamp in the form `YYYYMMDD-hhmmss`. You'll use this throughout to identify the project.
 
 ## 1. Safety Check
 We want to start from a safe, committed base so the project can roll back if necessary. If `git status --porcelain` returns empty, everything is fine and you can proceed. If it shows untracked files and/or uncommitted changes:
@@ -20,13 +22,17 @@ We want to start from a safe, committed base so the project can roll back if nec
 - If the user grants permission, generate the commit with an appropriate message and proceed.
 - If the user denies permission, abort.
 
+## 2. Create Plan Directory
+Create the directory `doc/plan/YYYYMMDD-hhmmss-redesign/` under the project root. All planning files will go here.
+
 ## 2. Draft Feature Doc
 Go through the code and write a "feature doc." This brief document describes the essential functions of the system, but NOT implementation details. A zero-context agent will use the feature doc to design an "ideal architecture" for the system, and we do not want it influenced by the present implementation. See `references/sample-feature-doc.md` for an example.
 
-- Store the document in `tmp/YYYYMMDD-hhmmss-feature-doc.md`.
+- Store the document in `feature-doc.md` in the plan direcotry.
 - If the code base is large, you may delegate review to 1-10 sub-agents. Don't do this unless you need to.
 - Ignore commented-out code and unreachable code.
 - If there is a spec or roadmap, include functionality which is clearly and definitely on the roadmap. Do NOT include "nice to haves," brainstorming output, experimental features, or vague future plans.
+- Don't ask questions during this stage. If you're unsure about something, make a decision and record it in "User Review Items."
 
 ### Feature Doc Elements
 - **Overview:**
@@ -43,19 +49,17 @@ Go through the code and write a "feature doc." This brief document describes the
         - Include cost, complexity, and performance considerations, not just correctness issues.
         - If you find code changes addressing a hypothetical scenario, with no indication that the scenario actually happened, assess whether that scenario is likely and/or impactful enough to justify altering the design. If in doubt, leave it out.
         - Summarize the problem only. Do NOT describe how it was solved. Avoid language which hints at a particular solution.
+- **User Review Items**: Decisions you made which you want the user to review.
 
 ## 3. Draft Greenfield Architecture
 Spin up an "architect" sub-agent with no context. Give it the prompt in `references/architect-prompt.md`, with the following string substitutions:
 
-- "@feature-doc-path": Path to the feature doc
+- "@plan-directory": Path to the plan directory
 - "@sample-architecture-plan": Absolute path to `references/sample-architecture.md`
-- "@architecture-plan-path": `tmp/YYYYMMDD-hhmmss-architecture.md`
 
-You may customize this prompt further if you think it's important.
+Once the architect finishes its draft, review `architecture.md` in the plan directory, keeping in mind your knowledge of the existing code base. Note any bugs or issues that you find. Also think about what would have to be changed to comply with the new design, and consider:
 
-Once the architect finishes its draft, review its work in light of your knowledge of the existing code base. Note any bugs or issues that you find. Also think about what would have to be changed to comply with the new design, and consider:
-
-1. Has the user specifically given orders (to coding agents or in human-written documentation) not to go this route? If so, obey that directive unless the benefit is enormous or the user's stated reasons no longer apply. In those cases, ask the user for permission.
+1. Has the user specifically given orders (to coding agents or in human-written documentation) not to go this route? If so, obey that directive unless the benefit is enormous or the user's stated reasons no longer apply. In those cases, you may ignore the directive, but note that decision in User Review Items.
 2. Does this change improve the current design, worsen it, or have no real impact either way? Avoid changes that don't lead to a clear improvement.
 3. Has this change been tried before in this codebase? If so, why was it rejected last time? Don't move forward unless you're confident those problems won't recur.
 4. How much risk is associated with this change? Will it require manual or time-consuming testing (beyond running a normal automated test suite), or a challenging deployment process? Keep in mind that the user has already accepted significant effort and risk by asking for a rearchitecting, so this should only be a deal-breaker if the effort/risk are very high and the benefit small.
@@ -65,21 +69,16 @@ Based on this, suggest adjustments to the sub-agent, and answer any questions or
 
 (If the sub-agent declined some of your suggestions, think about the reasons it gave for refusal. If you think it's wrong and you can safely implement those suggestions yourself, do so. Otherwise, leave it.)
 
-## 4. Edit Architecture
-Spin up an "editor" sub-agent and give it the prompt in `references/editor-prompt.md`, with the following string substitutions:
+## 4. Automated Review
+Spin up a "reviewer" sub-agent and give it the prompt in `references/reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
 
-- "@feature-doc-path": Path to the feature doc
-- "@architecture-plan-path": `tmp/YYYYMMDD-hhmmss-architecture.md`
+The reviewer agent will generate a list of improvements and suggestions. Consider each in light of what you've learned so far, and make those changes you agree with.
 
-You may customize this prompt further if you think it's important.
+## 5. Prepare User Summary
+Spin up a "writer" sub-agent and give it the prompt in `references/summary-writer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
 
-The editor agent will generate a list of improvements and suggestions. Consider each in light of what you've learned so far, and make those changes you agree with.
+When the writer reports that the first draft is done, launch a "reviewer" sub-agent and give it the prompt in `references/summary-reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory. Notify the writer when the reviewer finishes.
 
-## 5. Draft Implementation Plans
-The next step is to write detailed plans to carry out the overhaul. Identify the breakpoints where you can split the architecture into components that talk to each other through tightly defined interfaces. Add the list of components to the architecture plan, and specify what methods or classes each one exposes to the others.
+When the writer reports that it has finished its edits, launch a "copy-editor" sub-agent and give it the prompt in `references/summary-copy-editor-prompt.md`, replacing "@plan-directory" with the path to the plan directory. Notify the writer when the copy editor finishes.
 
-Then, for each component, spin up a sub-agent and give it the prompt in `references/implementation-planner-prompt.md`. Make the following string substitutions:
-
-- "@feature-doc-path": Path to the feature doc
-- "@architecture-plan-path": `tmp/YYYYMMDD-hhmmss-architecture.md`
-- "@implementor-assignment": The component assigned to this sub-agent
+Wait for the writer to report that the final draft is complete.

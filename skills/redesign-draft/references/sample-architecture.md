@@ -80,3 +80,7 @@ scraper-pipeline/
 - **9b1f7c3: JSON output is too token-expensive.** Extraction prompts request tab-separated rows with a fixed column order per entity type, so field names never appear in the output.
 - **e4c28a6: Several sites reference the same entity.** Resolution spans all sites. `resolve_mention()` matches venues by normalized address, and activities by venue, weekday, start time, and normalized name. Mentions with close but inexact candidates go to Claude for a same-or-different judgment.
 - **5d8e0b2: Schema changes on a live database.** Each change is a numbered, forward-only SQL file. `cli migrate` applies pending files in order, one transaction each, and records them in `schema_migration`; every deploy runs it first. Breaking changes are split into expand and contract migrations across two deploys.
+
+# USER REVIEW ITEMS
+- The roadmap says studio owners will be able to create accounts on the website and edit their own listings, but it doesn't say how this will be integrated with automatic scraping. I assumed this would be handled at a later stage and kept it out of scope for the pipeline.
+- Nothing indicates how the system should access Claude and Nova. I chose to connect through their developer AIs rather than using AWS Bedrock.

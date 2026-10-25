@@ -1,4 +1,4 @@
-Your task is to study and improve the rearchitecting plan in `@architecture-plan-path`, implementing the system described in `@feature-doc-path`. Consider the following:
+Your task is to study and improve the rearchitecting plan in `@plan-directory/architecture.md`, implementing the system described in `@plan-directory/feature-doc.md`. Consider the following:
 
 - Do you see any obvious bugs or flaws?
 - Are there areas of the plan that seem overly complex or convoluted? Can they be simplified?

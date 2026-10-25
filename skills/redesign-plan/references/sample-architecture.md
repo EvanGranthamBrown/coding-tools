@@ -83,4 +83,4 @@ scraper-pipeline/
 
 # USER REVIEW ITEMS
 - The roadmap says studio owners will be able to create accounts on the website and edit their own listings, but it doesn't say how this will be integrated with automatic scraping. I assumed this would be handled at a later stage and kept it out of scope for the pipeline.
-- Nothing indicates how the system should access Claude and Nova. I chose to connect through their developer AIs rather than using AWS Bedrock.
+- Nothing indicates how the system should access Claude and Nova. I chose to connect through their developer APIs rather than using AWS Bedrock.

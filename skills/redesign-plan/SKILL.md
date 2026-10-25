@@ -1,6 +1,7 @@
 ---
 name: redesign-plan
 description: Draft a plan to overhaul an existing code base for a clean, well-organized architecture. Activated on user request.
+disable-model-invocation: true
 metadata:
   version: 0.1.0
   author: Evan Grantham-Brown
@@ -29,7 +30,7 @@ Create the directory `doc/plan/YYYYMMDD-hhmmss-redesign/` under the project root
 ## 3. Draft Feature Doc
 Go through the code and write a "feature doc." This brief document describes the essential functions of the system, but NOT implementation details. A zero-context agent will use the feature doc to design an "ideal architecture" for the system, and we do not want it influenced by the present implementation. See `references/sample-feature-doc.md` for an example.
 
-- Store the document in `feature-doc.md` in the plan direcotry.
+- Store the document in `feature-doc.md` in the plan directory.
 - If the code base is large, you may delegate review to 1-10 sub-agents. Don't do this unless you need to.
 - Ignore commented-out code and unreachable code.
 - If there is a spec or roadmap, include functionality which is clearly and definitely on the roadmap. Do NOT include "nice to haves," brainstorming output, experimental features, or vague future plans.

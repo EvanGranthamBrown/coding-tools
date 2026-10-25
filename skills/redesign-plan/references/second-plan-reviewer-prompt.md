@@ -1,4 +1,4 @@
-Your task is to review the rearchitecting plan in `@plan-directory/architecture.md` and the migration plan in `@plan-directory/migration.md`, implementing the system described in `@plan-directory/feature-doc.md`. Consider the following:
+Your task is to review and critique the rearchitecting plan in `@plan-directory/architecture.md` and the migration plan in `@plan-directory/migration.md`, implementing the system described in `@plan-directory/feature-doc.md`. Consider the following:
 
 - Do you see any obvious bugs or flaws?
 - Are there areas of the plans that seem overly complex or convoluted? Can they be simplified?

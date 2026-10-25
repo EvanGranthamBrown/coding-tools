@@ -1,4 +1,4 @@
-Your task is to study and improve the summary draft in `@plan-directory/summary-draft.md`, which describes a code system and a plan to rearchitect that system.
+Your task is to review and critique the summary draft in `@plan-directory/summary-draft.md`, which describes a code system and a plan to rearchitect that system.
 
 First, read the summary draft on its own with no other context. It should stand alone, requiring no advance knowledge. Make a note of anything you don't understand or find confusing.
 

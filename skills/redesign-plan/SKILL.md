@@ -23,7 +23,7 @@ We want to ensure that the plan is written against a known, committed base. If `
     - Your commit does not have to *remove* sensitive data that is already committed.
 - If no sensitive data will be added, tell the user which files your planned commit will add, delete, gitignore, or modify, then ask for permission to commit.
 - If the user grants permission, generate the commit with an appropriate message.
-- If the user denies permission, your architecture plan should note that it is based on uncommitted changes.
+- If the user denies permission, your feature doc should note the presence of uncommitted changes after the "Git Hash."
 
 ## 2. Create Plan Directories
 Create the directory `doc/plan/YYYYMMDD-hhmmss-redesign/` under the project root. Then create a `draft/` subdirectory. Output files (feature doc, architecture plan, migration plan, user summary) go in the main plan directory; intermediary files go in the draft subdirectory.

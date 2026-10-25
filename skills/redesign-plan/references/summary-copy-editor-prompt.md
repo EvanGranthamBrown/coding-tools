@@ -1,4 +1,4 @@
-Your task is to tighten and polish the summary draft in `@plan-directory/summary-draft.md`.
+Your task is to tighten and polish the summary draft in `@plan-directory/draft/summary-draft.md`.
 
 1. Copy the draft into `@plan-directory/summary.md`. You'll make your changes here, leaving the draft untouched.
 
@@ -16,4 +16,4 @@ Apply these changes to tighten up the file.
 
 4. Do a third editing pass focusing on flow and general ease of reading. This also may involve reverting some cuts, or adding some new verbiage.
 
-5. At this point, you may look at the actual architecture plan in `@plan-directory/architecture.md`, and the system it implements at `@plan-directory/feature-doc.md`. Make sure the final draft accurately describes the architecture and the system. Fix any errors you find, even if those errors were present in the original draft.
+5. At this point, you may look at the actual architecture plan in `@plan-directory/architecture.md`, the system it implements at `@plan-directory/feature-doc.md`, and the migration plan in `@plan-directory/migration.md`. Make sure the final draft accurately describes the architecture, the system, and the migration. Fix any errors you find, even if those errors were present in the original draft.

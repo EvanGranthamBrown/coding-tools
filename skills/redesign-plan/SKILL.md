@@ -9,7 +9,7 @@ metadata:
 This skill generates a plan for a large-scale redesign of an existing system. Guidelines to keep in mind:
 
 - This plan will be implemented by AI coding agents, which means it can contemplate sweeping changes without committing months or years of human dev time. Be bold.
-- Creating the plan will take some time, and the user may have other things to do. Only engage the user at the start (in "Safety Check") and at the end (in "Present Summary and Discuss"). Don't stop in the middle to wait on a user reply.
+- Creating the plan will take some time, and the user may have other things to do. Only engage the user at the start (in "Prepare Base") and at the end (in "Present Summary and Discuss"). Don't stop in the middle to wait on a user reply.
 
 Redesign target: $ARGUMENTS
 
@@ -39,6 +39,7 @@ Go through the code and write a "feature doc." This brief document describes the
 ### Feature Doc Elements
 - **Overview:**
     - **Name:** A name encapsulating the code under review. No more than 5 words.
+    - **Git Hash**: The hash of the Git commit on which the plan is based.
     - **Description:** Summarize the core function of the code under review. No more than 30 words.
     - **Purpose:** Describe why this function needs to be performed. No more than 30 words.
 - **Technologies:** List the technologies chosen for this system. This includes physical or virtual infrastructure, languages, storage, communications protocols, AI models, code libraries, etc. Only list technologies used by the code under review. Do not specify how any given technology is used.
@@ -77,22 +78,22 @@ Spin up a "first plan reviewer" sub-agent and give it the prompt in `references/
 This agent will generate a list of improvements and suggestions. Consider each in light of what you've learned so far, and make those changes you agree with.
 
 ## 6. Draft Migration Plan
-For each component of the system, spin up a "migration planner" sub-agent and give it the prompt in `references/migration-planner-prompt.md`, with the following string substitutions:
+For each component listed in the architecture plan, spin up a "migration planner" sub-agent and give it the prompt in `references/migration-planner-prompt.md`, with the following string substitutions:
 
 - "@plan-directory": Path to the plan directory
 - "@assignment": Name of the agent's assigned component
 - "@slug": Name of the assigned component in kebab-case (lower case, replace spaces with hyphens)
 
-These sub-agents will prepare plans to migrate each component, along with concerns and suggestions to update the architecture plan; these are stored in the drafts directory, named `migrate-<component>.md`. When all have finished, review their work. First look over their suggestions for the architecture and make those changes you agree with. Then look for problems both within each migration plan; conflicts between the plans; and changes forced by your architecture revisions. Direct the migration planners to fix these issues.
+These sub-agents will prepare plans to migrate each component, along with concerns and suggestions to update the architecture plan; these are stored in the draft subdirectory, named `migrate-<component>.md`. When all have finished, review their work. First look over their suggestions for the architecture and make those changes you agree with. Then look for problems within each migration plan, conflicts between the plans, and changes forced by your architecture revisions. Direct the migration planners to fix these issues.
 
-When they're done with the revision pass, draft a single combined `migrate.md` file in the main plan directory, where you consolidate all the migration plans, removing redundant elements.
+When they're done with the revision pass, draft a single `migration.md` file in the main plan directory, where you lay out a complete migration plan. Consider how to sequence the migration safely and how to minimize the number of manual steps required.
 
 ## 7. Second Automated Review
 Spin up a "second plan reviewer" sub-agent and give it the prompt in `references/second-plan-reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
 
 This agent will generate a list of improvements and suggestions for both the architecture and the migration plan. Consider each in light of what you've learned so far, and make those changes you agree with.
 
-## 6. Prepare User Summary
+## 8. Prepare User Summary
 Spin up a "summary writer" sub-agent and give it the prompt in `references/summary-writer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
 
 When the writer reports that the first draft is done, launch a "summary reviewer" sub-agent and give it the prompt in `references/summary-reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory. Notify the writer when the summary reviewer finishes.
@@ -101,7 +102,7 @@ When the writer reports that it has finished its edits, launch a "summary copy-e
 
 When the writer reports that the final draft is complete, proceed to the final section.
 
-## 7. Present Summary and Discuss
+## 9. Present Summary and Discuss
 Tell the user that the first version of the plan is ready.
 
 The final draft of the user summary will be the `summary.md` file in the plan directory. If you have a tool to open the file in the user's UI, do so, ideally in markdown preview mode. If you don't have such a tool, give the user the path to the file, preferably as a clickable link (if you can).

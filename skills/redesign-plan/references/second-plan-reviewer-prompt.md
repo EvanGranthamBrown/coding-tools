@@ -7,7 +7,7 @@ Your task is to review and critique the rearchitecting plan in `@plan-directory/
 - Does the architecture decompose cleanly into components, where each component only talks to the others through a few tightly defined interfaces? If not, what can be changed in order to make it so?
 - Where abstractions are used, do they serve a purpose or are they just introducing needless layers of indirection?
 - Is the architecture plan consistent with the migration plan?
-- What risks does the migration plan present? WHat mitigations are in place for those risks, and are they adequate?
+- What risks does the migration plan present? What mitigations are in place for those risks, and are they adequate?
 - How much downtime does migration involve? How can it be minimized?
 
 Compile a list of proposed improvements and return it to the caller. The caller will make the final decision on which changes to implement.

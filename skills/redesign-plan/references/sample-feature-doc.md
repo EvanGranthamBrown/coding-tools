@@ -1,6 +1,8 @@
 # OVERVIEW
 **Name:** Scraper Pipeline
 
+**Git Hash**: c58b93f
+
 **Description:** Searches the web for dance studios, scrapes their websites, and extracts information about classes, venues, and events.
 
 **Purpose:** Supports a website where users can search for upcoming dance activities near them.

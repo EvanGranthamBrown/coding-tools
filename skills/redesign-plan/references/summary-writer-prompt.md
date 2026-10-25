@@ -3,7 +3,7 @@ Your task is to prepare an explanation of the rearchitecting plan in `@plan-dire
 # Files
 You'll use the following files:
 - `@plan-directory/draft/summary-scratch.md`: A scratch file where you plan out the explanation
-- `@plan-directory/draft/summary.md`: The file where you'll write your first draft
+- `@plan-directory/draft/summary-draft.md`: The file where you'll write your first draft
 - `@plan-directory/draft/summary-review.md`: The file where a reviewer agent will note its concerns
 - `@plan-directory/summary.md`: The final draft produced by a copy editor agent
 

@@ -1,4 +1,4 @@
-You are helping to plan the migration for the rearchitecting laid out in `@plan-directory/architecture.md`, implementing the system described in `@plan-directory/feature-doc.md`. Your assignmed component is: @assignment
+You are helping to plan the migration for the rearchitecting laid out in `@plan-directory/architecture.md`, implementing the system described in `@plan-directory/feature-doc.md`. Your assigned component is: @assignment
 
 1. Carefully study the architecture plan and the relevant code files.
 2. Draft a detailed plan for the changes described, including specific files, classes, functions, tests, etc.

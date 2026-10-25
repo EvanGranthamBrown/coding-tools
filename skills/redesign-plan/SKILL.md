@@ -19,7 +19,7 @@ Redesign target: $ARGUMENTS
 ## 1. Prepare Base
 We want to ensure that the plan is written against a known, committed base. If `git status --porcelain` returns empty, everything is fine and you can proceed. If it shows untracked files and/or uncommitted changes:
 - For each untracked file, decide whether you think it should be added or gitignored. Follow any clear project conventions that apply; otherwise, fall back to general best practices.
-- If uncommitted changes would insert sensitive data (passwords, API keys, etc.) into a tracked file, or if project conventions dictate adding an untracked file that has sensitive data, tell the user which files are affected and ask whether to proceed without a commit. If the user says to proceed, move on to #2. Never commit sensitive data to git.
+- If uncommitted changes would insert sensitive data (passwords, API keys, etc.) into a tracked file, or if project conventions dictate adding an untracked file that has sensitive data, tell the user which files are affected and ask whether to proceed without a commit. If the user says to proceed, move on to #2; your feature doc should note the presence of uncommitted changes after the "Git Hash.". Never commit sensitive data to git.
     - Your commit does not have to *remove* sensitive data that is already committed.
 - If no sensitive data will be added, tell the user which files your planned commit will add, delete, gitignore, or modify, then ask for permission to commit.
 - If the user grants permission, generate the commit with an appropriate message.
@@ -109,4 +109,4 @@ Tell the user that the first version of the plan is ready.
 
 The final draft of the user summary will be the `summary.md` file in the plan directory. If you have a tool to open the file in the user's UI, do so, ideally in markdown preview mode. If you don't have such a tool, give the user the path to the file, preferably as a clickable link (if you can).
 
-The user will review the summary and may respond with questions, suggestions, or concerns. Discuss and revise until the user is satisfied. When you make revisions, update the architecture plan and the user summary at the same time; also update the feature doc if the changes warrant it.
+The user will review the summary and may respond with questions, suggestions, or concerns. Discuss and revise until the user is satisfied. When you make revisions, update the architecture plan, migration plan, user summary, and/or feature doc at the same time.

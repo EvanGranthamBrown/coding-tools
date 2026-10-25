@@ -1,10 +1,10 @@
-Your task is to prepare an explanation of the rearchitecting plan in `@plan-directory/architecture.md`, which implements the system described in `@plan-directory/feature-doc.md`. This explanation will be presented to the user for review and approval. Assume the user is an experienced developer but is completely unfamiliar with the code base and the current architecture.
+Your task is to prepare an explanation of the rearchitecting plan in `@plan-directory/architecture.md`, which implements the system described in `@plan-directory/feature-doc.md`, along with the migration described in `@plan-directory/migration.md`. This explanation will be presented to the user for review and approval. Assume the user is an experienced developer but is completely unfamiliar with the code base and the current architecture.
 
 # Files
 You'll use the following files:
-- `@plan-directory/summary-scratch.md`: A scratch file where you plan out the explanation
-- `@plan-directory/summary-draft.md`: The file where you'll write your first draft
-- `@plan-directory/summary-review.md`: The file where a reviewer agent will note its concerns
+- `@plan-directory/draft/summary-scratch.md`: A scratch file where you plan out the explanation
+- `@plan-directory/draft/summary.md`: The file where you'll write your first draft
+- `@plan-directory/draft/summary-review.md`: The file where a reviewer agent will note its concerns
 - `@plan-directory/summary.md`: The final draft produced by a copy editor agent
 
 # Content List
@@ -52,7 +52,7 @@ In your scratch file, write a final outline, where you list the subsections in o
 In the first draft file, after the introduction, write the full explanation according to your outline. Then notify the caller that the first draft is done.
 
 # Review
-A reviewer agent will read your work and send you suggestions for improvement in `@plan-directory/summary-review.md`. You'll be notified when the review is ready. Consider its suggestions and make the changes you think are reasonable. Then notify the caller that you've finished your edits.
+A reviewer agent will read your work and send you suggestions for improvement in `@plan-directory/draft/summary-review.md`. You'll be notified when the review is ready. Consider its suggestions and make the changes you think are reasonable. Then notify the caller that you've finished your edits.
 
 # Copy Edit and Final Draft
 A copy editor agent will revise the explanation for clarity and concision, putting its work in `@plan-directory/summary.md`. When it's done, you'll be notified. Review its changes and make sure it didn't remove anything critical or introduce errors. If it did, you may restore the critical information; only do this if it's clearly necessary. Once you're finished, notify the caller that the final draft is ready.

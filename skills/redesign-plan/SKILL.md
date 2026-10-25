@@ -23,8 +23,8 @@ We want to ensure that the plan is written against a known, committed base. If `
 - If the user grants permission, generate the commit with an appropriate message.
 - If the user denies permission, your architecture plan should note that it is based on uncommitted changes.
 
-## 2. Create Plan Directory
-Create the directory `doc/plan/YYYYMMDD-hhmmss-redesign/` under the project root. All planning files will go here.
+## 2. Create Plan Directories
+Create the directory `doc/plan/YYYYMMDD-hhmmss-redesign/` under the project root. Then create a `draft/` subdirectory. Output files (feature doc, architecture plan, migration plan, user summary) go in the main plan directory; intermediary files go in the draft subdirectory.
 
 ## 3. Draft Feature Doc
 Go through the code and write a "feature doc." This brief document describes the essential functions of the system, but NOT implementation details. A zero-context agent will use the feature doc to design an "ideal architecture" for the system, and we do not want it influenced by the present implementation. See `references/sample-feature-doc.md` for an example.
@@ -70,10 +70,26 @@ Based on this, suggest adjustments to the sub-agent, and answer any questions or
 
 (If the sub-agent declined some of your suggestions, think about the reasons it gave for refusal. If you think it's wrong and you can safely implement those suggestions yourself, do so. Otherwise, leave it.)
 
-## 5. Automated Review
-Spin up a "plan reviewer" sub-agent and give it the prompt in `references/reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
+## 5. First Automated Review
+Spin up a "first plan reviewer" sub-agent and give it the prompt in `references/first-plan-reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
 
-The reviewer agent will generate a list of improvements and suggestions. Consider each in light of what you've learned so far, and make those changes you agree with.
+This agent will generate a list of improvements and suggestions. Consider each in light of what you've learned so far, and make those changes you agree with.
+
+## 6. Draft Migration Plan
+For each component of the system, spin up a "migration planner" sub-agent and give it the prompt in `references/migration-planner-prompt.md`, with the following string substitutions:
+
+- "@plan-directory": Path to the plan directory
+- "@assignment": Name of the agent's assigned component
+- "@slug": Name of the assigned component in kebab-case (lower case, replace spaces with hyphens)
+
+These sub-agents will prepare plans to migrate each component, along with concerns and suggestions to update the architecture plan; these are stored in the drafts directory, named `migrate-<component>.md`. When all have finished, review their work. First look over their suggestions for the architecture and make those changes you agree with. Then look for problems both within each migration plan; conflicts between the plans; and changes forced by your architecture revisions. Direct the migration planners to fix these issues.
+
+When they're done with the revision pass, draft a single combined `migrate.md` file in the main plan directory, where you consolidate all the migration plans, removing redundant elements.
+
+## 7. Second Automated Review
+Spin up a "second plan reviewer" sub-agent and give it the prompt in `references/second-plan-reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
+
+This agent will generate a list of improvements and suggestions for both the architecture and the migration plan. Consider each in light of what you've learned so far, and make those changes you agree with.
 
 ## 6. Prepare User Summary
 Spin up a "summary writer" sub-agent and give it the prompt in `references/summary-writer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.

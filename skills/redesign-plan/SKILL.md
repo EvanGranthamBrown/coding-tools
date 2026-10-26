@@ -9,21 +9,20 @@ metadata:
 This skill generates a plan for a large-scale redesign of an existing system. Guidelines to keep in mind:
 
 - This plan will be implemented by AI coding agents, which means it can contemplate sweeping changes without committing months or years of human dev time. Be bold.
-- Creating the plan will take some time, and the user may have other things to do. Only engage the user at the start (in "Prepare Base") and at the end (in "Present Summary and Discuss"). Don't stop in the middle to wait on a user reply.
+- Creating the plan will take some time, and the user may have other things to do. Only engage the user at the start (in "Prepare Base") and at the end (in "Present Summary and Discuss" and "Cleanup"). Don't stop in the middle to wait on a user reply.
 - Many of your sub-agents will need the ability to resume after returning their initial result (a common pattern is having an agent generate a first draft, providing feedback, and having it apply that feedback). If your harness doesn't support this, you'll need to launch secondary agents to apply feedback.
+- Never write or commit outside your plan directory.
 
 Redesign target: $ARGUMENTS
 
 (If no target is given, your target is the entire code base in the current repo.)
 
 ## 1. Prepare Base
-We want to ensure that the plan is written against a known, committed base. If `git status --porcelain` returns empty, everything is fine and you can proceed. If it shows untracked files and/or uncommitted changes:
-- For each untracked file, decide whether you think it should be added or gitignored. Follow any clear project conventions that apply; otherwise, fall back to general best practices.
-- If uncommitted changes would insert sensitive data (passwords, API keys, etc.) into a tracked file, or if project conventions dictate adding an untracked file that has sensitive data, tell the user which files are affected and ask whether to proceed without a commit. If the user says to proceed, move on to #2; your feature doc should note the presence of uncommitted changes after the "Git Hash.". Never commit sensitive data to git.
-    - Your commit does not have to *remove* sensitive data that is already committed.
-- If no sensitive data will be added, tell the user which files your planned commit will add, delete, gitignore, or modify, then ask for permission to commit.
-- If the user grants permission, generate the commit with an appropriate message.
-- If the user denies permission, your feature doc should note the presence of uncommitted changes after the "Git Hash."
+We want to ensure that the plan is written against a known, committed base.
+
+- Abort if `git status --porcelain` shows untracked files and/or uncommitted changes.
+- Abort if `git symbolic-ref -q HEAD` shows that we are on a detached HEAD.
+- If you abort, tell the user why and how to fix it.
 
 ## 2. Create Plan Directories
 Create the directory `doc/plan/YYYYMMDD-hhmmss-redesign/` under the project root. Then create a `draft/` subdirectory. Output files (feature doc, architecture plan, migration plan, user summary) go in the main plan directory; intermediary files go in the draft subdirectory.
@@ -34,15 +33,19 @@ Go through the code and write a "feature doc." This brief document describes the
 - Store the document in `feature-doc.md` in the plan directory.
 - If the code base is large, you may delegate review to 1-10 sub-agents. Don't do this unless you need to.
 - Ignore commented-out code and unreachable code.
+- Ignore any other plan directories in `doc/plan/`.
 - If there is a spec or roadmap, include functionality which is clearly and definitely on the roadmap. Do NOT include "nice to haves," brainstorming output, experimental features, or vague future plans.
 - Don't ask questions during this stage. If you're unsure about something, make a decision and record it in the feature doc's User Review Items.
+
+When this step is complete, add the feature doc to Git and commit the plan directory.
 
 ### Feature Doc Elements
 - **Overview:**
     - **Name:** A name encapsulating the code under review. No more than 5 words.
-    - **Git Hash**: The hash of the Git commit on which the plan is based.
+    - **Starting Branch | Commit**: The branch on which the plan is based, and the hash of the specific Git commit.
     - **Description:** Summarize the core function of the code under review. No more than 30 words.
     - **Purpose:** Describe why this function needs to be performed. No more than 30 words.
+    - **Redesign Status:** Indicates the current status of the redesign. Value should be either `In Progress` or `Ready to Apply`.
 - **Technologies:** List the technologies chosen for this system. This includes physical or virtual infrastructure, languages, storage, communications protocols, AI models, code libraries, etc. Only list technologies used by the code under review. Do not specify how any given technology is used.
 - **Duties:** Group the functions of this system into high-level "duties."
     - **Functionality:** List the specific tasks that must be performed as part of this duty.
@@ -74,10 +77,14 @@ Based on this, suggest adjustments to the sub-agent, and answer any questions or
 
 (If the sub-agent declined some of your suggestions, think about the reasons it gave for refusal. If you think it's wrong and you can safely implement those suggestions yourself, do so. Otherwise, leave it.)
 
+When this step is complete, add the architecture plan to Git and commit the plan directory.
+
 ## 5. First Automated Review
 Spin up a "first plan reviewer" sub-agent and give it the prompt in `references/first-plan-reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
 
 This agent will generate a list of improvements and suggestions. Consider each in light of what you've learned so far, and make those changes you agree with.
+
+When this step is complete, commit the plan directory.
 
 ## 6. Draft Migration Plan
 For each component listed in the architecture plan, spin up a "migration planner" sub-agent (don't run more than 20 in parallel) and give it the prompt in `references/migration-planner-prompt.md`, with the following string substitutions:
@@ -90,10 +97,14 @@ These sub-agents will prepare plans to migrate each component, along with concer
 
 When they're done with the revision pass, draft a single `migration.md` file in the main plan directory, where you lay out a complete migration plan. Consider how to sequence the migration safely and how to minimize the number of manual steps required. Also, if there are existing code files which are not covered by any component of the new architecture, document how to handle them.
 
+When this step is complete, add the migration plan and the draft component plans to Git and commit the plan directory.
+
 ## 7. Second Automated Review
 Spin up a "second plan reviewer" sub-agent and give it the prompt in `references/second-plan-reviewer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
 
 This agent will generate a list of improvements and suggestions for both the architecture and the migration plan. Consider each in light of what you've learned so far, and make those changes you agree with.
+
+When this step is complete, commit the plan directory.
 
 ## 8. Prepare User Summary
 Spin up a "summary writer" sub-agent and give it the prompt in `references/summary-writer-prompt.md`, replacing "@plan-directory" with the path to the plan directory.
@@ -102,11 +113,23 @@ When the writer reports that the first draft is done, launch a "summary reviewer
 
 When the writer reports that it has finished its edits, launch a "summary copy-editor" sub-agent and give it the prompt in `references/summary-copy-editor-prompt.md`, replacing "@plan-directory" with the path to the plan directory. Notify the writer when the copy editor finishes.
 
-When the writer reports that the final draft is complete, proceed to the final section.
+When the writer reports that the final draft is complete, add the user summary and the draft summary files (`draft/summary-scratch.md`, `draft/summary-draft.md`, `draft/summary-review.md`) to Git and commit the plan directory.
 
 ## 9. Present Summary and Discuss
 Tell the user that the first version of the plan is ready.
 
 The final draft of the user summary will be the `summary.md` file in the plan directory. If you have a tool to open the file in the user's UI, do so, ideally in markdown preview mode. If you don't have such a tool, give the user the path to the file, preferably as a clickable link (if you can).
 
-The user will review the summary and may respond with questions, suggestions, or concerns. Discuss and revise until the user is satisfied. When you make revisions, update the architecture plan, migration plan, user summary, and/or feature doc at the same time.
+The user will review the summary and may respond with questions, suggestions, or concerns. Discuss and revise until the user is satisfied.
+- Write both sides of the conversation verbatim into `draft/user-revisions.md`. Add this file to git.
+- Each time you make a revision, commit the plan directory. (You don't need to commit after every write to `draft/user-revisions.md`, only when you change the plan files.)
+
+When the user seems to be satisfied, present a yes/no dialog asking whether they're ready to mark the plan complete. If the answer is no, continue with the revision process. Only move on to step 10 if the answer is yes.
+
+## 10. Cleanup
+- Go through the feature doc, the architecture plan, the migration plan, and the user summary, and check to see if your revisions produced inconsistencies or errors. If they did, fix them.
+    - Use `draft/user-revisions.md` if necessary to remind you what the user's intent was.
+    - If you discover that the user's requested revisions produced a serious bug or flaw, try to fix it while respecting the user's stated directives. If you can't (and only if you can't), explain the situation to the user and re-open the discussion from the previous step, including the yes/no dialog once the user seems ready to proceed.
+- In the feature doc, change "Redesign Status" to `Ready to Apply`.
+- Commit the plan directory.
+- Notify the user that the plan is finished, and tell them that it can be implemented with the skill invocation `/redesign-apply YYYYMMDD-hhmmss`.
